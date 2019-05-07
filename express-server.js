@@ -27,6 +27,12 @@ app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
 
+//adding route of /urls-index
+app.get("/urls", function(req, res) => {
+  let templateVars = {urls: urlDatabase };
+  res.render("urls-index", templateVars);
+});
+
 //checking port and establishing localhost
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}`)
