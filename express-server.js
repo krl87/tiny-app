@@ -28,7 +28,7 @@ app.get("/urls.json", (req, res) => {
 });
 
 //adding route of /urls-index
-app.get("/urls", function(req, res) => {
+app.get("/urls", (req, res) => {
   let templateVars = {urls: urlDatabase };
   res.render("urls-index", templateVars);
 });
