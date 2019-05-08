@@ -62,6 +62,12 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   res.redirect("/urls");
 });
 
+// add login functionality
+app.post("/login", (req, res) => {
+  res.cookie("username", req.body.username);
+  res.redirect("/urls");
+});
+
 app.post("/urls/:shortURL", (req,res) => {
   const shortU = req.params.shortURL;
   urlDatabase[shortU] = req.body.longURL;
