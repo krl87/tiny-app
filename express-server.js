@@ -46,16 +46,18 @@ app.get("/urls/new", (req, res) => {
   res.render("urls-new")
 });
 
+//take urls inputed into form and store them
 app.get("/urls/:shortURL", (req, res) => {
   let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL]};
   res.render("urls-show", templateVars);
 });
 
+// redirect the short URL to long URL
 app.get("/u/:shortURL", (req, res) => {
   res.redirect(urlDatabase[req.params.shortURL])
 });
 
-// take urls inputed into form and store them
+//  calling random string function redirecting to url list
 app.post("/urls", (req, res) => {
   console.log(req.body);
   const shortURL = generateRandomString();
