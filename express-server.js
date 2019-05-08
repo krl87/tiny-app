@@ -1,7 +1,7 @@
 // adding required module exports
-var express = require("express");
-var app = express();
-var PORT = 8080; //default port 8080
+const express = require("express");
+const app = express();
+const PORT = 8080; //default port 8080
 const bodyParser = require("body-parser");
 
 //buffer body request into string
@@ -10,12 +10,12 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
 
 function generateRandomString() {
-  var randomURL = Math.random().toString(36).substring(7);
+  const randomURL = Math.random().toString(36).substring(7);
   return randomURL;
 }
 
 //variable array with keys and values to display
-var urlDatabase = {
+const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com",
 };
@@ -52,6 +52,15 @@ app.get("/urls/:shortURL", (req, res) => {
   res.render("urls-show", templateVars);
 });
 
+// add functionality to delete button
+app.post("/urls/:shortURL/delete", (req, res) => {
+  const shortU = req.params.shortURL;
+  delete urlDatabase[shortU];
+
+  res.redirect("/urls");
+});
+
+
 // redirect the short URL to long URL
 app.get("/u/:shortURL", (req, res) => {
   res.redirect(urlDatabase[req.params.shortURL])
@@ -65,7 +74,7 @@ app.post("/urls", (req, res) => {
   const longURL = req.body.longURL;
   urlDatabase[shortURL] = longURL;
 
-  res.redirect('/urls');
+  res.redirect("/urls");
 });
 
 //checking port and establishing localhost
