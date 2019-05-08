@@ -17,7 +17,7 @@ function generateRandomString() {
 //variable array with keys and values to display
 var urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+  "9sm5xK": "http://www.google.com",
 };
 
 // handling get request for the root/index path "homepage"
@@ -52,13 +52,16 @@ app.get("/urls/:shortURL", (req, res) => {
 });
 
 // take urls inputed into form and store them
-app.post("/urls", (req, res) {
+app.post("/urls", (req, res) => {
   console.log(req.body);
-  res.send("Ok")
+  const shortURL = generateRandomString();
+  const longURL = req.body.longURL;
+  urlDatabase[shortURL] = longURL;
 });
 
 //checking port and establishing localhost
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}`)
 });
+
 
