@@ -17,8 +17,9 @@
       <!-- looping through object to get key/value pairs for URLs -->
       <% for (url in urls){ %>
       <li class="list-group-item ">
-        <strong>Short code:</strong> <%= url %> <span>&#8594;</span> <a href="#"><%= urls[url] %></a>
+        <strong>Short code:</strong> <%= url %> <span>&#8594;</span><%= urls[url] %>
       <!-- button to delete unwanted URLs -->
+      <a href="urls/<%= url%>" class="btn btn-link">Edit</a>
       <form method="POST" action="/urls/<%= url%>/delete">
         <input type="submit" value="Delete" class="btn btn-danger">
       </form>

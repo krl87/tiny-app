@@ -9,12 +9,16 @@
 <header>
   <% include ../views/partials/_headers %>
 </header>
-<body style="font-size:20px; padding:50px;">
+<body style="font-size:16px; padding:50px;">
   <main class="container">
     <div >
-      <a href="">Create new TinyLink</a>
-      <p>TinyUrl for <a href="<%= longURL %>" target="_blank"><%= longURL %></a></br><%= shortURL %></p>
+      <h2>ShortURL: <%= shortURL %></h2>
+      <form method="POST" action="/urls/<%= shortURL %>">
+        <input type="text" style="width: 300px" name="longURL" value="<%= longURL %>">
+        <input type="submit" value="Update" class="btn btn-primary">
+      </form>
     </div>
   </main>
 </body>
 </html>
+
