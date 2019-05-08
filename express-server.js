@@ -41,6 +41,7 @@ app.get("/urls", (req, res) => {
   res.render("urls-index", templateVars);
 });
 
+//route to intake new URLS and pass through route below
 app.get("/urls/new", (req, res) => {
   res.render("urls-new")
 });
@@ -48,6 +49,12 @@ app.get("/urls/new", (req, res) => {
 app.get("/urls/:shortURL", (req, res) => {
   let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL]};
   res.render("urls-show", templateVars);
+});
+
+// take urls inputed into form and store them
+app.post("/urls", (req, res) {
+  console.log(req.body);
+  res.send("Ok")
 });
 
 //checking port and establishing localhost
