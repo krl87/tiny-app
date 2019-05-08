@@ -22,6 +22,7 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com",
 };
 
+
 // handling get request for the root/index path "homepage"
 app.get("/", (req, res) => {
   res.send("Hello!");
@@ -39,18 +40,28 @@ app.get("/urls.json", (req, res) => {
 
 //adding route of /urls-index
 app.get("/urls", (req, res) => {
-  let templateVars = {urls: urlDatabase };
+  let templateVars = {
+    urls: urlDatabase,
+    username: req.cookies["username"]
+  };
   res.render("urls-index", templateVars);
 });
 
 //route to intake new URLS and pass through route below
 app.get("/urls/new", (req, res) => {
-  res.render("urls-new")
+  let templateVars = {
+    username: req.cookies["username"]
+  };
+  res.render("urls-new", templateVars);
 });
 
 //take urls inputed into form and store them
 app.get("/urls/:shortURL", (req, res) => {
-  let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL]};
+  let templateVars = {
+    shortURL: req.params.shortURL,
+    longURL: urlDatabase[req.params.shortURL],
+    username: req.cookies["username"]
+  };
   res.render("urls-show", templateVars);
 });
 
@@ -67,6 +78,13 @@ app.post("/login", (req, res) => {
   res.cookie("username", req.body.username);
   res.redirect("/urls");
 });
+
+// add logout functionality
+app.post("/logout", (req, res) => {
+  res.clearCookie("username");
+  res.redirect("/urls");
+});
+
 
 app.post("/urls/:shortURL", (req,res) => {
   const shortU = req.params.shortURL;

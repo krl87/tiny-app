@@ -1,11 +1,19 @@
 <h1>TinyApp</h1>
-<form method="POST" action="/login" class="">
-  <div class="form-group">
-    <label>Username:</label>
-    <input type="text" style="width: 300px" name="username">
-    <button class="btn btn-primary" type="submit">Sign In</button>
+<% if(username){ %>
+  <div>
+    <p>Signed in as <%= username %></p>
   </div>
-</form>
-<div>
-  <p>Signed in as <%= username %></p>
-</div>
+  <form method="POST" action="/logout" class="">
+    <button class="btn btn-primary" type="submit">Logout</button>
+  </form>
+ <% } else { %>
+   <form method="POST" action="/login" class="">
+      <div class="form-group">
+        <label>Username:</label>
+        <input type="text" style="width: 300px" name="username">
+        <button class="btn btn-primary" type="submit">Sign In</button>
+      </div>
+  </form>
+<% } %>
+
+
