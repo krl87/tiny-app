@@ -16,7 +16,10 @@
     <ul class="list-group list-group-flush">
       <% for (url in urls){ %>
       <li class="list-group-item ">
-        <%= url %> <a href="#"> - <%= urls[url] %></a>
+        <strong>Short code:</strong> <%= url %> <span>&#8594;</span> <a href="#"><%= urls[url] %></a>
+      <form method="POST" action="/urls/<%= url%>/delete">
+        <input type="button" value="Delete" class="btn btn-danger">
+      </form>
       </li>
       <% }; %>
     </ul>
