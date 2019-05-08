@@ -7,17 +7,20 @@
   <title>TinyApp</title>
 </head>
 <body style="font-size:20px; padding:50px;">
-  <main class="container">
-    <h1>TinyApp</h1>
-    <div class="">
-      <ul class="list-group list-group-flush">
-        <% for (url in urls){ %>
-        <li class="list-group-item ">
-          <%= url %> <a href="#"> - <%= urls[url] %></a>
-        </li>
-        <% }; %>
-      </ul>
-    </div>
-  </main>
+<header>
+  <% include ../views/partials/_headers %>
+</header>
+<main class="container">
+  <div>
+    <h2>My URLs</h2>
+    <ul class="list-group list-group-flush">
+      <% for (url in urls){ %>
+      <li class="list-group-item ">
+        <%= url %> <a href="#"> - <%= urls[url] %></a>
+      </li>
+      <% }; %>
+    </ul>
+  </div>
+</main>
 </body>
 </html>
