@@ -51,12 +51,19 @@ app.get("/urls/:shortURL", (req, res) => {
   res.render("urls-show", templateVars);
 });
 
+app.get("/u/:shortURL", (req, res) => {
+  res.redirect(urlDatabase[req.params.shortURL])
+});
+
 // take urls inputed into form and store them
 app.post("/urls", (req, res) => {
   console.log(req.body);
   const shortURL = generateRandomString();
+  console.log(shortURL);
   const longURL = req.body.longURL;
   urlDatabase[shortURL] = longURL;
+
+  res.redirect('/urls');
 });
 
 //checking port and establishing localhost
