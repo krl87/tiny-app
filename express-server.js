@@ -2,7 +2,7 @@
 const express = require("express");
 const app = express();
 const PORT = 8080; //default port 8080
-const bodyParser = require("body-parser");
+const bodyParser = require("body-parser"); //middleware for POST
 const cookieParser = require("cookie-parser");
 
 app.use(cookieParser());
@@ -22,15 +22,17 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com",
 };
 
+const users = {
+  "test": {
+    id: "test",
+    email: "test@email.com",
+    password: "test"
+  },
+}
 
 // handling get request for the root/index path "homepage"
 app.get("/", (req, res) => {
-  res.send("Hello!");
-});
-
-// route for /hello
-app.get("/hello", (req, res) => {
-  res.send("<html><body>Hello <b>World</b></body></html>\n");
+  res.send("Welcome to TinyApp");
 });
 
 // calling object urlDatabase json page
@@ -45,6 +47,45 @@ app.get("/urls", (req, res) => {
     username: req.cookies["username"]
   };
   res.render("urls-index", templateVars);
+});
+
+// register
+app.get("/register", (req, res) => {
+    let templateVars = {
+      urls: urlDatabase,
+      username: req.cookies["username"],
+      user: req.cookies["users"],
+    };
+  res.render("register", templateVars);
+});
+
+app.post("/register", (req, res) => {
+  const { email, password } = req.body;
+  let userExists = false;
+
+  if (!email || !password ) {
+    res.status(400).send("400 errrrorrr");
+  }
+
+  for (user in users) {
+    if(users[user].email === email) {
+      userExists= true;
+    }
+  }
+  if (userExists) {
+    res.status(400).send("400 errrrorrr");
+  }
+
+  const genID = generateRandomString();
+  const newUser = {
+    id: genID,
+    email,
+    password
+  }
+
+  users[genID] = newUser;
+  res.cookie("id", genID);
+  res.redirect("/urls");
 });
 
 //route to intake new URLS and pass through route below
