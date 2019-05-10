@@ -20,7 +20,7 @@
         <strong>Short code:</strong> <%= url %> <span> &#8594; </span><%= urls[url].longURL %>
       <!-- button to delete unwanted URLs -->
       <a href="/urls/<%= url %>" class="btn btn-link">Edit</a>
-      <form method="POST" action="/urls/<%= urls[url]%>/delete">
+      <form method="POST" action="/urls/<%= url %>/delete">
         <input type="submit" value="Delete" class="btn btn-danger">
       </form>
       </li>

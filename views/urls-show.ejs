@@ -13,8 +13,9 @@
   <main class="container">
     <div >
       <h2>ShortURL: <%= shortURL %></h2>
+      <h2>LongURL: <%= longURL %></h2>
       <form method="POST" action="/urls/<%= shortURL %>">
-        <input type="text" style="width: 300px" name="longURL" value="<%= longURL %>">
+        <input type="url" style="width: 300px" name="longURL" value="<%= longURL %>">
         <input type="submit" value="Update" class="btn btn-primary">
       </form>
     </div>
