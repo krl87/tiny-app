@@ -11,6 +11,8 @@ app.use(bodyParser.urlencoded({extended: true}));
 //set ejs as view engine
 app.set("view engine", "ejs");
 
+//helper functions to generate random string and check if user email and password match
+
 function generateRandomString() {
   const randomURL = Math.random().toString(36).substring(7);
   return randomURL;
@@ -49,27 +51,11 @@ app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
 
-//adding route of /urls-index
-app.get("/urls", (req, res) => {
-  const userID = req.cookies.user_id;
-  const urls = {};
-
-  const keys = Object.keys(urlDatabase);
-
-  keys.forEach((url) => {
-    if (urlDatabase[url].userID === userID) {
-      urls[url] = urlDatabase[url];
-    }
-  })
-  let templateVars = {
-    urls,
-    user: users[req.cookies["user_id"]]
-  };
-  res.render("urls-index", templateVars);
-});
+/* ----- ROUTES ----- */
 
 
 // register
+
 app.get("/register", (req, res) => {
 
     let templateVars = {
@@ -108,13 +94,60 @@ app.post("/register", (req, res) => {
   res.redirect("/urls");
 });
 
-
 // login
 app.get("/login", (req, res) => {
-
   res.render("login");
 });
 
+// add login functionality
+app.post("/login", (req, res) => {
+  const email = req.body.email;
+  const password = req.body.password;
+  const userid = checkUserInfo(email, password)
+  if (userid){
+    res.cookie("user_id", userid);
+    res.redirect("/urls");
+  } else {
+    res.status(403).send("403 errrrorrr");
+  }
+
+});
+
+// add logout functionality
+app.post("/logout", (req, res) => {
+  res.clearCookie("user_id");
+  res.redirect("/login");
+});
+
+//adding route of /urls-index
+app.get("/urls", (req, res) => {
+  const userID = req.cookies.user_id;
+  const urls = {};
+
+  const keys = Object.keys(urlDatabase);
+
+  keys.forEach((url) => {
+    if (urlDatabase[url].userID === userID) {
+      urls[url] = urlDatabase[url];
+    }
+  })
+  let templateVars = {
+    urls,
+    user: users[req.cookies["user_id"]]
+  };
+  res.render("urls-index", templateVars);
+});
+
+//  calling random string function redirecting to url list
+app.post("/urls", (req, res) => {
+  console.log(req.body);
+  const shortURL = generateRandomString();
+  console.log(shortURL);
+  const longURL = req.body.longURL;
+  urlDatabase[shortURL] = longURL;
+
+  res.redirect("/urls");
+});
 
 //route to intake new URLS and pass through route below
 app.get("/urls/new", (req, res) => {
@@ -142,27 +175,6 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   res.redirect("/urls");
 });
 
-// add login functionality
-app.post("/login", (req, res) => {
-  const email = req.body.email;
-  const password = req.body.password;
-  const userid = checkUserInfo(email, password)
-  if (userid){
-    res.cookie("user_id", userid);
-    res.redirect("/urls");
-  } else {
-    res.status(403).send("403 errrrorrr");
-  }
-
-});
-
-// add logout functionality
-app.post("/logout", (req, res) => {
-  res.clearCookie("user_id");
-  res.redirect("/login");
-});
-
-
 app.post("/urls/:shortURL", (req,res) => {
   const shortU = req.params.shortURL;
   urlDatabase[shortU] = req.body.longURL;
@@ -173,17 +185,6 @@ app.post("/urls/:shortURL", (req,res) => {
 // redirect the short URL to long URL
 app.get("/u/:shortURL", (req, res) => {
   res.redirect(urlDatabase[req.params.shortURL])
-});
-
-//  calling random string function redirecting to url list
-app.post("/urls", (req, res) => {
-  console.log(req.body);
-  const shortURL = generateRandomString();
-  console.log(shortURL);
-  const longURL = req.body.longURL;
-  urlDatabase[shortURL] = longURL;
-
-  res.redirect("/urls");
 });
 
 //checking port and establishing localhost
