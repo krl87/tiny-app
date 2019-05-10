@@ -3,7 +3,9 @@
   <div>
     <p>Signed in as <%= locals.user.email %></p>
   </div>
+  <form action="/logout" method="post">
     <a href="/login" class="btn btn-primary">Logout</a>
+  </form>
  <% } else { %>
     <div>
       <a href="/login" class="btn btn-outline-primary">Login</a>

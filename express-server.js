@@ -27,13 +27,13 @@ function checkUserInfo(userEmail, userPassword) {
 
 //variable array with keys and values to display
 const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com",
+  b6UTxQ: { longURL: "https://www.tsn.ca", userID: "aJ48lW" },
+  i3BoGr: { longURL: "https://www.google.ca", userID: "aJ48lW" }
 };
 
 const users = {
-  "test": {
-    id: "test",
+  "aJ48lW": {
+    id: "aJ48lW",
     email: "test@email.com",
     password: "test"
   },
@@ -51,8 +51,18 @@ app.get("/urls.json", (req, res) => {
 
 //adding route of /urls-index
 app.get("/urls", (req, res) => {
+  const userID = req.cookies.user_id;
+  const urls = {};
+
+  const keys = Object.keys(urlDatabase);
+
+  keys.forEach((url) => {
+    if (urlDatabase[url].userID === userID) {
+      urls[url] = urlDatabase[url];
+    }
+  })
   let templateVars = {
-    urls: urlDatabase,
+    urls,
     user: users[req.cookies["user_id"]]
   };
   res.render("urls-index", templateVars);
@@ -71,7 +81,7 @@ app.get("/register", (req, res) => {
 
 app.post("/register", (req, res) => {
   const { email, password } = req.body;
-  // let userExists = false;
+  let userExists = false;
 
   if (!email || !password ) {
     res.status(400).send("400 errrrorrr");
