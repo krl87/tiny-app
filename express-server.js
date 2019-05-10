@@ -110,7 +110,6 @@ app.post("/login", (req, res) => {
   } else {
     res.status(403).send("403 errrrorrr");
   }
-
 });
 
 // add logout functionality
@@ -130,12 +129,20 @@ app.get("/urls", (req, res) => {
     if (urlDatabase[url].userID === userID) {
       urls[url] = urlDatabase[url];
     }
-  })
+  });
   let templateVars = {
     urls,
     user: users[req.cookies["user_id"]]
   };
   res.render("urls-index", templateVars);
+});
+
+//route to intake new URLS and pass through route below
+app.get("/urls/new", (req, res) => {
+  let templateVars = {
+    user: users[req.cookies["user_id"]]
+  };
+  res.render("urls-new", templateVars);
 });
 
 //  calling random string function redirecting to url list
@@ -149,19 +156,11 @@ app.post("/urls", (req, res) => {
   res.redirect("/urls");
 });
 
-//route to intake new URLS and pass through route below
-app.get("/urls/new", (req, res) => {
-  let templateVars = {
-    user: users[req.cookies["user_id"]]
-  };
-  res.render("urls-new", templateVars);
-});
-
 //take urls inputed into form and store them
 app.get("/urls/:shortURL", (req, res) => {
   let templateVars = {
     shortURL: req.params.shortURL,
-    longURL: urlDatabase[req.params.shortURL],
+    longURL: urlDatabase[req.params.shortURL].longURL,
     user: users[req.cookies["user_id"]]
   };
   res.render("urls-show", templateVars);
@@ -178,18 +177,17 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 app.post("/urls/:shortURL", (req,res) => {
   const shortU = req.params.shortURL;
   urlDatabase[shortU] = req.body.longURL;
+  console.log(urlDatabase);
   console.log(req.body);
   res.redirect("/urls");
 });
 
 // redirect the short URL to long URL
 app.get("/u/:shortURL", (req, res) => {
-  res.redirect(urlDatabase[req.params.shortURL])
+  res.redirect(urlDatabase[req.params.shortURL].longURL)
 });
 
 //checking port and establishing localhost
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}`)
 });
-
-
