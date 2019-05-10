@@ -1,19 +1,14 @@
 <h1>TinyApp</h1>
-<% if(locals.user){ %>
+<% if (locals.user) { %>
   <div>
-    <p>Signed in as <%= user.email %></p>
+    <p>Signed in as <%= locals.user.email %></p>
   </div>
-  <form method="POST" action="/logout" class="">
-    <button class="btn btn-primary" type="submit">Logout</button>
-  </form>
+    <a href="/login" class="btn btn-primary">Logout</a>
  <% } else { %>
-  <form method="POST" action="/login" class="">
-    <div class="form-group">
-      <label>Username:</label>
-      <input type="text" style="width: 300px" name="username">
-      <button class="btn btn-primary" type="submit">Sign In</button>
+    <div>
+      <a href="/login" class="btn btn-outline-primary">Login</a>
+      <a href="/register" class="btn btn-outline-primary">Register</a>
     </div>
-  </form>
 <% } %>
 
 

@@ -16,6 +16,15 @@ function generateRandomString() {
   return randomURL;
 }
 
+function checkUserInfo(userEmail, userPassword) {
+  for (user in users) {
+    if (users[user].email === userEmail && users[user].password === userPassword) {
+      return user;
+    }
+  }
+  return false;
+}
+
 //variable array with keys and values to display
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
@@ -62,7 +71,7 @@ app.get("/register", (req, res) => {
 
 app.post("/register", (req, res) => {
   const { email, password } = req.body;
-  let userExists = false;
+  // let userExists = false;
 
   if (!email || !password ) {
     res.status(400).send("400 errrrorrr");
@@ -88,6 +97,14 @@ app.post("/register", (req, res) => {
   res.cookie("user_id", genID);
   res.redirect("/urls");
 });
+
+
+// login
+app.get("/login", (req, res) => {
+
+  res.render("login");
+});
+
 
 //route to intake new URLS and pass through route below
 app.get("/urls/new", (req, res) => {
@@ -117,14 +134,22 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 
 // add login functionality
 app.post("/login", (req, res) => {
-  res.cookie("username", req.body.username);
-  res.redirect("/urls");
+  const email = req.body.email;
+  const password = req.body.password;
+  const userid = checkUserInfo(email, password)
+  if (userid){
+    res.cookie("user_id", userid);
+    res.redirect("/urls");
+  } else {
+    res.status(403).send("403 errrrorrr");
+  }
+
 });
 
 // add logout functionality
 app.post("/logout", (req, res) => {
-  res.clearCookie("username");
-  res.redirect("/urls");
+  res.clearCookie("user_id");
+  res.redirect("/login");
 });
 
 
