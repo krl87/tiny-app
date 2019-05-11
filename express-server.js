@@ -207,15 +207,11 @@ app.get("/urls/:shortURL", (req, res) => {
 // add functionality to delete button
 app.post("/urls/:shortURL/delete", (req, res) => {
   const userId = req.session.user_id
-  //const userId = req.cookies["user_id"];
   const shortU = req.params.shortURL;
-  console.log("url data and short u", urlDatabase[shortU]);
-  console.log("url data", urlDatabase)
   if (userId === urlDatabase[shortU].userID) {
     delete urlDatabase[shortU];
-    //res.redirect("/urls");
+    res.redirect("/urls");
   } else {
-    console.log("this worked")
     res.redirect("/login");
   }
 });
