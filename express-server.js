@@ -2,6 +2,7 @@
 const express = require("express");
 const app = express();
 const PORT = 8080; //default port 8080
+const bcrypt = require('bcrypt');
 const bodyParser = require("body-parser"); //middleware for POST
 const cookieParser = require("cookie-parser");
 
@@ -20,7 +21,7 @@ function generateRandomString() {
 
 function checkUserInfo(userEmail, userPassword) {
   for (user in users) {
-    if (users[user].email === userEmail && users[user].password === userPassword) {
+    if (users[user].email === userEmail && bcrypt.compareSync(users[user].password, userPassword)); {
       return user;
     }
   }
@@ -75,14 +76,16 @@ app.get("/register", (req, res) => {
   res.render("register", templateVars);
 });
 
+//post reg
 app.post("/register", (req, res) => {
   const { email, password } = req.body;
   let userExists = false;
 
+  const hashedPassword = bcrypt.hashSync(password, 10);
+
   if (!email || !password ) {
     res.status(400).send("400 errrrorrr");
   }
-
   for (user in users) {
     if(users[user].email === email) {
       userExists= true;
@@ -96,7 +99,7 @@ app.post("/register", (req, res) => {
   const newUser = {
     id: genID,
     email,
-    password
+    password: hashedPassword
   }
 
   users[genID] = newUser;
@@ -114,7 +117,7 @@ app.post("/login", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
   const userid = checkUserInfo(email, password)
-  if (userid){
+  if (userid) {
     res.cookie("user_id", userid);
     res.redirect("/urls");
   } else {
@@ -197,10 +200,12 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 
 app.post("/urls/:shortURL", (req,res) => {
   const shortU = req.params.shortURL;
+  const userId = req.cookies["user_id"];
   if (userId === urlDatabase[shortU].userID) {
     urlDatabase[shortU].longURL = req.body.longURL;
     res.redirect("/urls");
   } else {
+
     res.redirect("/login");
   }
 });
