@@ -12,14 +12,17 @@
 </header>
 <main class="container">
   <div>
+  <% if (locals.user) { %>
     <h2>My URLs</h2>
+  <% } %>
     <ul class="list-group list-group-flush">
       <!-- looping through object to get key/value pairs for URLs -->
       <% for (url in urls){ %>
       <li class="list-group-item ">
-        <strong>Short code:</strong> <%= url %> <span> &#8594; </span><%= urls[url].longURL %>
+        <strong>Short code: </strong><a href="/u/<%= url %>" target="_blank"><%= url %></a> <span> &#8594; </span><%= urls[url].longURL %>
       <!-- button to delete unwanted URLs -->
       <a href="/urls/<%= url %>" class="btn btn-link">Edit</a>
+
       <form method="POST" action="/urls/<%= url %>/delete">
         <input type="submit" value="Delete" class="btn btn-danger">
       </form>

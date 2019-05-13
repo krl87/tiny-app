@@ -2,12 +2,12 @@
 const express = require("express");
 const app = express();
 const PORT = 8080; //default port 8080
-const bcrypt = require('bcrypt');
+const bcrypt = require("bcrypt");
 const bodyParser = require("body-parser"); //middleware for POST
-var cookieSession = require('cookie-session');
+var cookieSession = require("cookie-session");
 
 app.use(cookieSession({
-  name: 'session',
+  name: "session",
   keys: ["sawyer"],
 }))
 
@@ -44,8 +44,14 @@ function urlsForUser(id) {
 
 //variable array with keys and values to display
 const urlDatabase = {
-  b6UTxQ: { longURL: "https://www.tsn.ca", userID: "aJ48lW" },
-  i3BoGr: { longURL: "https://www.google.ca", userID: "aJ48lW" }
+  b6UTxQ: {
+    longURL: "https://www.tsn.ca",
+    userID: "aJ48lW"
+  },
+  i3BoGr: {
+    longURL: "https://www.google.ca",
+    userID: "aJ48lW"
+  }
 };
 
 const users = {
@@ -53,12 +59,18 @@ const users = {
     id: "aJ48lW",
     email: "test@email.com",
     password: bcrypt.hashSync("test", 10)
-  },
+  }
 }
 
-// handling get request for the root/index path "homepage"
-app.get("/", (req, res) => {
-  res.send("Welcome to TinyApp");
+/* ----- ROUTES ----- */
+
+app.get("/", (req, res) =>{
+  const userId = req.session.user_id;
+  if (userId) {
+    res.redirect("/urls");
+  } else {
+    res.redirect("/register");
+  }
 });
 
 // calling object urlDatabase json page
@@ -66,14 +78,12 @@ app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
 
-/* ----- ROUTES ----- */
-
 // register
 app.get("/register", (req, res) => {
-    let templateVars = {
-      urls: urlDatabase,
-      user: users[req.session.user_id]
-    }
+  let templateVars = {
+    urls: urlDatabase,
+    user: users[req.session.user_id]
+  }
   res.render("register", templateVars);
 });
 
@@ -83,7 +93,7 @@ app.post("/register", (req, res) => {
   let userExists = false;
   const hashedPassword = bcrypt.hashSync(password, 10);
   if (!email || !password ) {
-    res.status(400).send("400 errrrorrr");
+    res.status(400).send("Please enter an email and a password");
     return;
   }
   for (user in users) {
@@ -92,7 +102,7 @@ app.post("/register", (req, res) => {
     }
   }
   if (userExists) {
-    res.status(400).send("400 errrrorrr");
+    res.status(400).send("Your email already exists, please try logging in");
     return;
   }
   const genID = generateRandomString();
@@ -120,7 +130,7 @@ app.post("/login", (req, res) => {
     req.session.user_id = userid;
     res.redirect("/urls");
   } else {
-    res.status(403).send("403 errrrorrr");
+    res.status(403).send("Your email or password did not match, please try again");
   }
 });
 
@@ -167,9 +177,17 @@ app.get("/urls/new", (req, res) => {
 
 //take urls inputed into form and store them
 app.get("/urls/:shortURL", (req, res) => {
+  const userID = req.session.user_id;
+  const urls =  urlsForUser(userID);
+
+  if (!userID && urlDatabase[req.params.shortURL]["userID"] !== userID) {
+    res.status(403).send("If you own this URL, please login. Register to make your own URLs.");
+  }
   let templateVars = {
+    urls,
     shortURL: req.params.shortURL,
     longURL: urlDatabase[req.params.shortURL].longURL,
+    user: users[req.session.user_id]
   };
 
   res.render("urls-show", templateVars);
@@ -189,7 +207,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 
 app.post("/urls/:shortURL", (req,res) => {
   const shortU = req.params.shortURL;
-  const userId = req.cookies["user_id"];
+  const userId = req.session.user_id;
   if (userId === urlDatabase[shortU].userID) {
     urlDatabase[shortU].longURL = req.body.longURL;
     res.redirect("/urls");
